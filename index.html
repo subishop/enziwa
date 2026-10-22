@@ -54,6 +54,12 @@ header{padding:44px 0 26px;text-align:center}
 .num::after{content:"";position:absolute;right:0;top:0;bottom:0;width:1.5px;background:linear-gradient(var(--brand) 0 22%,transparent 22% 78%,var(--brand) 78%)}
 .name{font-family:Jost,Inter,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.16em;font-size:17px;margin:2px 0 8px;line-height:1.3}
 .notes{display:grid;gap:5px}
+details.all{margin-top:4px}
+details.all summary{cursor:pointer;list-style:none;font-family:Jost,Inter,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);padding:4px 0;display:inline-flex;align-items:center;gap:6px}
+details.all summary::-webkit-details-marker{display:none}
+details.all summary::after{content:"+";font-size:14px;letter-spacing:0}
+details.all[open] summary::after{content:"−"}
+.allbody{display:grid;gap:5px;padding:8px 0 2px;border-top:1px solid var(--line);margin-top:4px}
 .tier{display:grid;grid-template-columns:18px 52px 1fr;align-items:start;gap:6px;font-size:14px}
 .tier .mark{margin-top:5px}
 .tier b{font-weight:500;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;line-height:22px}
@@ -130,7 +136,8 @@ const BLENDS = [
   [26,"Abeba Breeze",["Bergamot","Pineapple","Strawberry"],["Lavender","Juniper"],["Geranium"]],
   [27,"Nzola Rose",["Lychee","Passion fruit","Rhubarb"],["Rose","Peony","Red berries"],["Vanilla","Musk","Woods"]],
   [28,"Didun Smoke",["Cherry","Candied pear","Pink pepper"],["Cognac","Caramel","Rose"],["Tobacco","Vanilla","Tonka"]],
-  [29,"Zinariya Dusk",["Bergamot","Sage","Pineapple"],["Rose","Saffron","Jasmine"],["Amber","Leather","Oud"]]
+  [29,"Zinariya Dusk",["Bergamot","Sage","Pineapple"],["Rose","Saffron","Jasmine"],["Amber","Leather","Oud"]],
+  [30,"Pula Tide",["Citron","Mint","Cherry"],["Cognac","Basil","Orange blossom"],["Tobacco","Vanilla","Fig"]]
 ];
 
 const MARKS = {
@@ -139,14 +146,21 @@ const MARKS = {
   Base:'<svg class="mark" viewBox="0 0 12 12" aria-hidden="true"><path d="M1,6 L11,6" stroke="currentColor" stroke-width="1.6"/></svg>'
 };
 
+const FULL = {"1":[["Orange blossom","Lemon","Bergamot","Mandarin","Mango"],["Jasmine","Rose","Peony","Lily of the valley","Geranium"],["Amber","Musk","Tonka","Benzoin","Cedar"]],"2":[["Apple"],[],["Powdered vanilla"]],"3":[["Strawberry"],["Dark chocolate"],["Whiskey"]],"4":[["Pink pepper","Elemi","Bergamot","Grapefruit","Pineapple"],["Cinnamon","Saffron","Paprika","Dark chocolate"],["Leather","Tobacco","Vetiver","Whiskey"]],"5":[["Hazelnut","Pear","Olibanum","Strawberry","Blackcurrant","Red fruits","Pineapple","Apple"],["Osmanthus","Rose","Saffron","Jasmine sambac","Sweet pea","Freesia","Jasmine"],["Sandalwood","Vanilla","Akigalawood","Ambergris","Labdanum","Raspberry","Musk","Amber","Red musk"]],"6":[["Mango","Rum","Passionfruit","Sicilian lemon","Green apple","Cedar"],["Gardenia","Orange blossom","Bamboo","Jasmine","White rose"],["Vanilla","Musk","Vetiver","Amber"]],"7":[["Bergamot","Pineapple"],["Honeysuckle","Jasmine","Leather","Galbanum"],["Soft musk","Powdered vanilla","Patchouli","Black amber"]],"8":[["Caramel","Milk","Sugar","Citron","Calabrian bergamot","Sicilian orange","Strawberry"],["Honey","White flowers","Tunisian neroli","Ginger","Ceylon cinnamon"],["Vanilla","Praline","Musk","Chinese black tea","Guaiac wood","Olibanum"]],"9":[["Saffron","Jasmine","Orange"],["Amberwood","Ambergris"],["Fir resin","Cedar","Powdered vanilla"]],"10":[["Caramel","Milk","Sugar","Guava","Cardamom","Mango"],["Honey","White flowers","Toffee"],["Vanilla","Praline","Musk","Amberwood"]],"12":[["Cardamom","Coffee","Raspberry","Cherry","Strawberry","Blackberry","Blueberry","Orange"],["Jasmine sambac","Fir","Violet","Jasmine"],["Tahitian vanilla","Laotian oud","Incense","Woods","Musk","Amber"]],"13":[["Black cherry","Cherry liqueur","Bitter almond","Strawberry"],["Sour cherry","Plum","Turkish rose","Jasmine","Dark chocolate"],["Vanilla","Tonka","Cinnamon","Balsam","Sandalwood","Benzoin","Cloves","Cedar","Whiskey"]],"14":[["Passionfruit","Grapefruit","Pineapple","Tangerine","Strawberry","Lemon","Pink pepper","Peach","Clove","Apple"],["Peony","Vanilla orchid","Red berries","Jasmine","Lily of the valley","Mango","Coconut","Rice","Tuberose","Orris"],["Musk","Woody notes","Oakmoss","Vetiver","Tonka","Vanilla","Heliotrope"]],"15":[["Red fruits","Cherry","Apple","Strawberry","Mango","Lemon"],["Raspberry","Tiare flower"],["Cotton candy","Vanilla","Caramel","Red musk"]],"16":[["Lemon verbena","Iris","Lemon","Caramel","Milk","Sugar"],["Violet leaf","Honey","White flowers"],["Sandalwood","Ambergris","Cedar","Leather","Vanilla","Praline","Musk"]],"17":[["Lavender","Bergamot","Cherry","Pink pepper","Black pepper"],["Cappuccino","Raspberry","Jasmine","Cedar","Lily of the valley","Cognac","Rose"],["Vanilla","Amber","Sandalwood","Patchouli","Tobacco","Tonka"]],"18":[["Lavender","Mint","Coriander","Bergamot","Vanilla orchid","Strawberry"],["Caramel","Patchouli","Honey","Milk","Cedar","Jasmine","Brown sugar","Tonka"],["Coffee","Vanilla","Benzoin","Amber","Sandalwood","Musk","Amberwood"]],"19":[["Cardamom","Pink pepper","Violet leaf","Chestnut","Sugar","Cherry","Black pepper","Apple"],["Sage","Lavender","Cognac","Rose"],["Vanilla","Marron glace","Smoke","Tobacco","Tonka","Cedar","Patchouli"]],"20":[["Cardamom","Pink pepper","Violet leaf","Chestnut","Sugar","Orange"],["Sage","Lavender"],["Vanilla","Marron glace","Smoke"]],"21":[["Cardamom","Bergamot","Pink pepper","Rum","Passionfruit","Pineapple"],["Frankincense","Myrrh","Juniper","Gardenia","Orange blossom"],["Vanilla","Cedar","Patchouli","Musk","Vetiver"]],"22":[["Hazelnut","Pear","Olibanum","Vanilla orchid","Jasmine","Strawberry"],["Osmanthus","Rose","Saffron","Jasmine sambac","Brown sugar","Tonka"],["Sandalwood","Vanilla","Akigalawood","Ambergris","Labdanum","Amber","Amberwood","Musk","Patchouli"]],"23":[["Bergamot","Citron","Calabrian bergamot","Sicilian orange","Strawberry"],["Leather","Galbanum","Tunisian neroli","Ginger","Ceylon cinnamon"],["Patchouli","Black amber","Chinese black tea","Guaiac wood","Olibanum"]],"24":[["Hazelnut","Pear","Olibanum","Green apple","Tea","Bitter orange","Apple"],["Osmanthus","Rose","Saffron","Jasmine sambac","Oakmoss"],["Sandalwood","Vanilla","Akigalawood","Ambergris","Labdanum","Tonka","Vetiver","Cedar","Amber","Musk"]],"25":[["Pink pepper","Red fruits","Orange blossom","Lemon","Bergamot","Mandarin","Mango"],["Raspberry","Peach","Lily","Violet","Jasmine","Lily of the valley","Geranium","Rose"],["Patchouli","Amber","Tonka","Benzoin","Cedar"]],"26":[["Bergamot","Pineapple","Fern","Strawberry"],["Lavender","Juniper"],["Geranium"]],"27":[["Lychee","Rhubarb","Bergamot","Passionfruit","Grapefruit","Pineapple","Tangerine","Strawberry"],["Turkish rose","Peony","Vanilla orchid","Red berries","Jasmine","Lily of the valley"],["Vanilla","Musk","Cashmeran","Woody notes","Oakmoss"]],"28":[["Cherry","Pink pepper","Black pepper","Candied pear","Marshmallow"],["Cognac","Rose","Caramel","Jasmine"],["Tobacco","Vanilla","Tonka","Cedar","Patchouli","Sugar","Sandalwood"]],"29":[["Bergamot","Sage","Pineapple","Apple","Saffron","Jasmine"],["Bulgarian rose","Rosemary","Caramel","Ambergris","Vanilla","Amberwood"],["Amber","Leather","Oud","Fir resin","Cedar"]],"30":[["Citron","Mint","Blackcurrant","Cherry","Pink pepper","Black pepper"],["Basil","Coriander","Orange blossom","Cognac","Rose"],["Apricot","Fig","Ambrette","Tobacco","Vanilla","Tonka","Cedar","Patchouli"]]};
+
 const key = document.getElementById("key");
 key.innerHTML = BLENDS.map(([n,name,top,heart,base]) => {
   const tier = (label, list) => `<div class="tier">${MARKS[label]}<b>${label}</b><span>${list.join(", ")}</span></div>`;
-  const hay = [n,name,...top,...heart,...base].join(" ").toLowerCase();
+  const f0 = FULL[n] || [[],[],[]];
+  const merge = (a, b) => { const s = new Set(); return [...a, ...b].filter(x => { const k = x.toLowerCase(); if (s.has(k)) return false; s.add(k); return true; }); };
+  const full = [merge(top, f0[0]), merge(heart, f0[1]), merge(base, f0[2])];
+  const hay = [n,name,...full.flat()].join(" ").toLowerCase();
+  const ftier = (label, list) => list.length ? `<div class="tier">${MARKS[label]}<b>${label}</b><span>${list.join(", ")}</span></div>` : "";
   return `<div class="row" role="listitem" data-hay="${hay}">
     <div class="num">${String(n).padStart(2,"0")}</div>
     <div class="name">${name}</div>
-    <div class="notes">${tier("Top",top)}${tier("Heart",heart)}${tier("Base",base)}</div>
+    <div class="notes">${tier("Top",top)}${tier("Heart",heart)}${tier("Base",base)}
+      <details class="all"><summary>All notes</summary><div class="allbody">${ftier("Top",full[0])}${ftier("Heart",full[1])}${ftier("Base",full[2])}</div></details></div>
   </div>`;
 }).join("");
 
